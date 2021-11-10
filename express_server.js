@@ -47,3 +47,10 @@ app.get("/hello", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+// Generate a Random ShortURL
+// Implement a function that returns a string of 6 random alphanumeric characters.
+
+function generateRandomString() {
+  return Math.random().toString(36).substr(2,6);
+};
