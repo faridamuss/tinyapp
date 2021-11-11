@@ -35,49 +35,49 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 // app.get("/", (req, res) => {
-  //   res.send("Hello!");
-  // });
-  
-  // app.get("/hello", (req, res) => {
-    //   res.send("<html><body>Hello <b>World</b></body></html>\n");
-    // });
+// res.send("Hello!");
+// });
+
+// app.get("/hello", (req, res) => {
+// res.send("<html><body>Hello <b>World</b></body></html>\n");
+// });
     
-    // app.get("/urls.json", (req, res) => {
-      //   res.json(urlDatabase);
-      // });
+// app.get("/urls.json", (req, res) => {
+//res.json(urlDatabase);
+// });
       
-      //Set up POST requests:  
-      app.post("/urls", (req, res) => {
-        const shortString = generateRandomString();
-        urlDatabase[shortString] = req.body.longURL;
-        res.redirect(`/urls/${shortString}`);
-      });
+//Set up POST requests:  
+app.post("/urls", (req, res) => {
+  const shortString = generateRandomString();
+  urlDatabase[shortString] = req.body.longURL;
+  res.redirect(`/urls/${shortString}`);
+});
       
-      app.post("/urls/:id", (req, res) => {
-        const shortURL = req.params.id; 
-        const longURL = req.body.newURL;
-        urlDatabase[shortURL] = longURL;
-        res.redirect('/urls');
-      }); 
+app.post("/urls/:id", (req, res) => {
+  const shortURL = req.params.id; 
+  const longURL = req.body.newURL;
+  urlDatabase[shortURL] = longURL;
+  res.redirect('/urls');
+}); 
       
-      app.post("/urls/:shortURL/delete", (req, res) => {
-        const shortURL = req.params.shortURL;
-        delete urlDatabase[shortURL];
-        res.redirect('/urls');
-      });
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect('/urls');
+});
       
-      //Set up endpoint to handle POST to login: 
-      app.post("/login", (req, res) => {
-        res.cookie('username', req.body.username);
-        res.redirect('/urls');
-      }); 
+//Set up endpoint to handle POST to login: 
+app.post("/login", (req, res) => {
+  res.cookie('username', req.body.username);
+  res.redirect('/urls');
+}); 
       
-      //Listener
-      app.listen(PORT, () => {
-        console.log(`Example app listening on port ${PORT}!`);
-      });
+//Listener
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
       
-      // Implement a function that returns a string of 6 random alphanumeric characters.
-      function generateRandomString() {
-        return Math.random().toString(36).substr(2,6);
-      };
+// Implement a function that returns a string of 6 random alphanumeric characters.
+function generateRandomString() {
+  return Math.random().toString(36).substr(2,6);
+};
