@@ -1,17 +1,38 @@
+//All the requirements
 const express = require("express");
+const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+
 const PORT = 8080; // default port 8080
 
-const app = express();
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
-app.set("view engine", "ejs");
+//Listen port
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
 
+//This tells the Express app to use EJS as its templating engine
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({extended: true}));
+
+//Cookies
+app.use(cookieParser());
+
+//The Database
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+// The Functions: 
+// Implement a function that returns a string of 6 random alphanumeric characters.
+function generateRandomString() {
+  let text = '';
+   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   for (let i = 0; i < 6; i++)
+     text += possible.charAt(Math.floor(Math.random() * possible.length));
+   return text;
+}
 
 //Set up GET requests:
 
@@ -52,18 +73,6 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
-
-// app.get("/", (req, res) => {
-// res.send("Hello!");
-// });
-
-// app.get("/hello", (req, res) => {
-// res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
-    
-// app.get("/urls.json", (req, res) => {
-//res.json(urlDatabase);
-// });
       
 //Set up POST requests:  
 app.post("/urls", (req, res) => {
@@ -95,13 +104,4 @@ app.post("/logout", (req, res) => {
   res.clearCookie('username', req.body.username);
   res.redirect('urls');
 });
-      
-//Listener
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-      
-// Implement a function that returns a string of 6 random alphanumeric characters.
-function generateRandomString() {
-  return Math.random().toString(36).substr(2,6);
-};
+  
