@@ -1,8 +1,6 @@
-//All the requirements
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-
 const PORT = 8080; // default port 8080
 
 const app = express();
@@ -11,8 +9,14 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    uderID: "aJ48lW"
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: "aJ48lW"
+  }
 };
 
 const users = { 
@@ -29,14 +33,6 @@ const users = {
 }
 
 // FUNCTIONS //
-// Implement a function that returns a string of 6 random alphanumeric characters.
-function generateRandomString() {
-  let text = '';
-   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   for (let i = 0; i < 6; i++)
-     text += possible.charAt(Math.floor(Math.random() * possible.length));
-   return text;
-}
 
 const emailInUsers = (email) => {
   for(id in users) {
@@ -47,7 +43,18 @@ const emailInUsers = (email) => {
   return false;
 };
 
+// Implement a function that returns a string of 6 random alphanumeric characters.
+function generateRandomString() {
+  let text = '';
+   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   for (let i = 0; i < 6; i++)
+     text += possible.charAt(Math.floor(Math.random() * possible.length));
+   return text;
+}
+
+
 //-------GET REQUESTS --------/
+
 app.get("/", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
@@ -75,10 +82,10 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-app.get("/urls/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL; 
+app.get("/urls/:shortURL", (req, res) => { 
   const templateVars = {
-    urls: urlDatabase, 
+    shortURL: req.params.shortURL, 
+    longURL: urlDatabase[req.params.shortURL].longURL, 
     user_id: req.cookies["user_id"], 
     users
   };
@@ -86,7 +93,7 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -116,7 +123,9 @@ app.post("/urls", (req, res) => {
     res.redirect("/login");    
   } else if (req.cookies.user_id) {
     const shortString = generateRandomString();
-    urlDatabase[shortString] = req.body.longURL; 
+    urlDatabase[shortString] = {};
+    urlDatabase[shortString].longURL = req.body.longURL
+    urlDatabase[shortString].userID = req.cookies["user_id"];
     res.redirect(`/urls/${shortString}`);
   }
 });
