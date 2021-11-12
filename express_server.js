@@ -26,8 +26,6 @@ const users = {
   }
 }
 
-//Set up GET requests:
-
 const getUserByEmail = function(email) {
   const values = Object.values(users); 
   for (const user of values) {
@@ -37,7 +35,7 @@ const getUserByEmail = function(email) {
   }
   return null; 
 };
-
+//Set up GET requests:
 app.get("/", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
@@ -81,6 +79,15 @@ const templateVars = {
   user: req.cookies["user"],
 }
 res.render("urls_registration", templateVars);
+});
+
+app.get("/login", (req, res) => {
+  const id = req.cookies['user_id']; 
+  const user = users[id];
+  if (user) {
+    return res.redirect("/urls");
+  }
+  res.render("login", { user });
 });
 
 //POST requests:  

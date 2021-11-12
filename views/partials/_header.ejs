@@ -15,9 +15,12 @@
           </div>
           </form>
           <% } else { %>
-        <form method="POST" action="/login" class="form-inline my-2 my-lg-0">
-         <input type="text" class="form-control" name="username" placeholder="Username" style="width: 200px; margin-left: 400px;">
-         <button type="submit" class="btn btn-outline-dark my-2 my-sm-0">Login</button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+              <div class="navbar-nav">
+                <a class="nav-item nav-link" href="/login" style="margin: 1em">Login</a>
+                <a class="nav-item nav-link" href="/register" style="margin: 1em">Register</a>
+              </div>
+            </div>
          <% } %>
         </form>
       </div>
