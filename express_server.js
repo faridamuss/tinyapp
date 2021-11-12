@@ -26,20 +26,32 @@ const users = {
   }
 }
 
-const getUserByEmail = function(email) {
-  const values = Object.values(users); 
-  for (const user of values) {
-    if (user.email === email) {
-      return user;
+const emailInUsers = (email) => {
+  for (id in users) {
+    if (users[id].email === email) {
+      return id;
     }
   }
-  return null; 
+  return false;
 };
+
+const existingPassword = (password, email) => {
+  const id = emailInUsers(email);
+  if(!id) {
+    return false;
+  }
+  if(users[id].password === password) {
+    return id; 
+  }
+  return false; 
+}
+
 //Set up GET requests:
+
 app.get("/", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
-    user: req.cookies["user"]
+    user: req.cookies["user_id"]
   };
   res.render("urls_index", templateVars);
 });
@@ -47,14 +59,14 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
-    user: req.cookies["user"],
+    user: req.cookies["user_id"],
   };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    username:req.cookies["username"],
+    username:req.cookies["user_id"],
   };
   res.render("urls_new", templateVars);
 });
@@ -64,7 +76,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL, 
     longURL: urlDatabase[shortURL],
-    user: req.cookies["user"]
+    user: req.cookies["user_id"]
   };
   res.render("urls_show", templateVars);
 });
@@ -76,18 +88,20 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/register", (req, res) => {
 const templateVars = {
-  user: req.cookies["user"],
+  user: req.cookies["user_id"],
 }
 res.render("urls_registration", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  const id = req.cookies['user_id']; 
-  const user = users[id];
-  if (user) {
-    return res.redirect("/urls");
+  const userId = req.cookies["user_id"]; 
+  if (userId) {
+    res.redirect("/urls");
   }
-  res.render("login", { user });
+  const templateVars = {
+    user: null,
+  };
+  res.render("urls_login", templateVars);
 });
 
 //POST requests:  
@@ -116,25 +130,37 @@ app.post("/register", (req, res) => {
 
   if (!enteredEmail || !enteredPassword) {
     res.status(400).send("400: Invalid email/password");
+  } else if (emailInUsers(enteredEmail, users)) {
+    res.status(400).send("400: Account already exists");
+  } else {
+    const user = {
+      id: generateRandomString(), 
+      email: req.body.email, 
+      password: req.body.password,
+    };
+    users[user.id] = users;
+    console.log(users);
+    res.cookie("user_id", user);
+    res.redirect('/urls');
   }
-
-  const user = {
-    id: generateRandomString(), 
-    email: req.body.email, 
-    password: req.body.password,
-  };
-  users[user.id] = users;
-  res.cookie("user", user);
-  res.redirect('/urls');
 });
 
 app.post("/login", (req, res) => {
-  res.cookie('user', req.body.user);
+  const email = req.body.email;
+  const password = req.body.password;
+  const userId = emailInUsers(email);
+  if (!userId) {
+    return res.status(403).send("403: Email not found");
+  }
+  if (!existingPassword(password, email)) {
+    return res.status(403).send("403: Invalid username/password");
+  }
+  res.cookie("user_id", userId);
   res.redirect('/urls');
 }); 
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('user', req.body.user);
+  res.clearCookie('user_id', req.body.user);
   res.redirect('urls');
 });
       
@@ -143,7 +169,13 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
       
-// Implement a function that returns a string of 6 random alphanumeric characters.
-function generateRandomString() {
-  return Math.random().toString(36).substr(2,6);
+// Implement a function that returns a string of 6 random alphanumeric characters
+function generateRandomString(length) {
+  let result = "";
+  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 };
