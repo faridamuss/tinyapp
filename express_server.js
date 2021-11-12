@@ -14,7 +14,6 @@ const urlDatabase = {
 };
 
 //Set up GET requests:
-
 app.get("/", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
@@ -53,39 +52,38 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-// app.get("/", (req, res) => {
-// res.send("Hello!");
-// });
 
-// app.get("/hello", (req, res) => {
-// res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
-    
-// app.get("/urls.json", (req, res) => {
-//res.json(urlDatabase);
-// });
-      
 //Set up POST requests:  
 app.post("/urls", (req, res) => {
   const shortString = generateRandomString();
   urlDatabase[shortString] = req.body.longURL;
   res.redirect(`/urls/${shortString}`);
 });
-      
+
 app.post("/urls/:id", (req, res) => {
   const shortURL = req.params.id; 
   const longURL = req.body.newURL;
   urlDatabase[shortURL] = longURL;
   res.redirect('/urls');
 }); 
-      
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
-      
+
 //Set up endpoint to handle POST to login: 
+
+app.get("/register", (req, res) => {
+  const id = req.cookies['user_id'];
+  const user = user[id];
+  if (user) {
+    return res.redirect("/urls");
+  }
+  res.render("register", { user });
+});
+
 app.post("/login", (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/urls');
