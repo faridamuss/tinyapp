@@ -74,7 +74,6 @@ res.render("urls_registration", templateVars);
 });
 
 //POST requests:  
-
 app.post("/urls", (req, res) => {
   const shortString = generateRandomString();
   urlDatabase[shortString] = req.body.longURL;
@@ -95,6 +94,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
+  const enteredEmail = req.body.email;
+  const enteredPassword = req.body.password; 
+
+  if (!enteredEmail || !enteredPassword) {
+    res.status(400).send("400: Invalid email/password");
+  }
+  
   const user = {
     id: generateRandomString(), 
     email: req.body.email, 
