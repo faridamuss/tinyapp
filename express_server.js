@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const PORT = 8080; // default port 8080
+const PORT = 8080; 
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -13,18 +13,18 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = { 
+const users = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
-}
+};
 
 const emailInUsers = (email) => {
   for (id in users) {
@@ -38,7 +38,7 @@ const emailInUsers = (email) => {
 //Set up GET requests:
 app.get("/", (req, res) => {
   const templateVars = {
-    urls: urlDatabase, 
+    urls: urlDatabase,
     user_id: req.cookies["user_id"],
     users
   };
@@ -56,9 +56,9 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-  urls: urlDatabase, 
-  user_id: req.cookies["user_id"], 
-  users
+    urls: urlDatabase, 
+    user_id: req.cookies["user_id"],
+    users
   };
   res.render("urls_new", templateVars);
 });
@@ -83,7 +83,7 @@ const templateVars = {
   urls: urlDatabase, 
   user_id: req.cookies["user_id"], 
   users
-}
+};
 res.render("urls_registration", templateVars);
 });
 
@@ -92,8 +92,8 @@ app.get("/login", (req, res) => {
     urls: urlDatabase, 
     user_id: req.cookies["user_id"],
     users
-  }
-  res.render("urls_login", templateVars)
+  };
+  res.render("urls_login", templateVars);
 });
 
 //POST requests:  
@@ -144,14 +144,14 @@ app.post("/login", (req, res) => {
     return res.status(403).send("403: Email not found");
   } else if (emailInUsers(enteredEmail, users)) {
     const user = emailInUsers(enteredEmail, users);
-    if(enteredPassword !== users[user].password) {
+    if (enteredPassword !== users[user].password) {
       return res.status(403).send("403: Invalid Username/Password");
     } else {
       res.cookie("user_id", user);
       res.redirect('/urls');
     }
   } else {
-    return res.status(400).send("Email not found")
+    return res.status(400).send("Email not found");
   }
 }); 
 
@@ -174,4 +174,4 @@ function generateRandomString(length) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
-};
+}
