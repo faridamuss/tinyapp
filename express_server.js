@@ -36,10 +36,12 @@ function generateRandomString() {
 
 //Set up GET requests:
 
+//Set up GET requests:
 app.get("/", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
-    username: req.cookies["username"]
+    user_id: req.cookies["user_id"],
+    users
   };
   res.render("urls_index", templateVars);
 });
@@ -47,14 +49,17 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
-    username: req.cookies["username"],
+    user: req.cookies["user_id"],
+    users
   };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    username:req.cookies["username"],
+  urls: urlDatabase, 
+  user_id: req.cookies["user_id"], 
+  users
   };
   res.render("urls_new", templateVars);
 });
@@ -62,9 +67,9 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL; 
   const templateVars = {
-    shortURL, 
-    longURL: urlDatabase[shortURL],
-    username: req.cookies["username"]
+    urls: urlDatabase, 
+    user_id: req.cookies["user_id"], 
+    users
   };
   res.render("urls_show", templateVars);
 });
@@ -80,28 +85,61 @@ app.post("/urls", (req, res) => {
   urlDatabase[shortString] = req.body.longURL;
   res.redirect(`/urls/${shortString}`);
 });
-      
+
 app.post("/urls/:id", (req, res) => {
   const shortURL = req.params.id; 
   const longURL = req.body.newURL;
   urlDatabase[shortURL] = longURL;
   res.redirect('/urls');
 }); 
-      
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
-      
-//Set up endpoint to handle POST to login: 
+
+app.post("/register", (req, res) => {
+  const enteredEmail = req.body.email;
+  const enteredPassword = req.body.password; 
+
+  if (!enteredEmail || !enteredPassword) {
+    res.status(400).send("400: Invalid email/password");
+  } else if (emailInUsers(enteredEmail, users)) {
+    res.status(400).send("400: Account already exists");
+  } else {
+    const user = {
+      id: generateRandomString(), 
+      email: req.body.email, 
+      password: req.body.password,
+    };
+    users[user.id] = users;
+    console.log(users);
+    res.cookie("user_id", user.id);
+    res.redirect('/urls');
+  }
+});
+
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
+  const enteredEmail = req.body.email; 
+  const enteredPassword = req.body.password; 
+  if (!enteredEmail) { //in case if no email is entered. 
+    return res.status(403).send("403: Email not found");
+  } else if (emailInUsers(enteredEmail, users)) {
+    const user = emailInUsers(enteredEmail, users);
+    if(enteredPassword !== users[user].password) {
+      return res.status(403).send("403: Invalid Username/Password");
+    } else {
+      res.cookie("user_id", user);
+      res.redirect('/urls');
+    }
+  } else {
+    return res.status(400).send("Email not found")
+  }
 }); 
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username', req.body.username);
+  res.clearCookie('user_id', req.body.user);
   res.redirect('urls');
 });
   
