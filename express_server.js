@@ -24,6 +24,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
 // The Functions: 
 // Implement a function that returns a string of 6 random alphanumeric characters.
 function generateRandomString() {
@@ -33,8 +46,6 @@ function generateRandomString() {
      text += possible.charAt(Math.floor(Math.random() * possible.length));
    return text;
 }
-
-//Set up GET requests:
 
 //Set up GET requests:
 app.get("/", (req, res) => {
