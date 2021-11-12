@@ -28,6 +28,16 @@ const users = {
 
 //Set up GET requests:
 
+const getUserByEmail = function(email) {
+  const values = Object.values(users); 
+  for (const user of values) {
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null; 
+};
+
 app.get("/", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
@@ -100,7 +110,7 @@ app.post("/register", (req, res) => {
   if (!enteredEmail || !enteredPassword) {
     res.status(400).send("400: Invalid email/password");
   }
-  
+
   const user = {
     id: generateRandomString(), 
     email: req.body.email, 
