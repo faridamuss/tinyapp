@@ -1,24 +1,15 @@
 //All the requirements
 const express = require("express");
-const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
 const PORT = 8080; // default port 8080
 
-//Listen port
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
-//This tells the Express app to use EJS as its templating engine
-app.set("view engine", "ejs");
+const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
-
-//Cookies
 app.use(cookieParser());
+app.set("view engine", "ejs");
 
-//The Database
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -37,7 +28,7 @@ const users = {
   }
 }
 
-// The Functions: 
+// FUNCTIONS //
 // Implement a function that returns a string of 6 random alphanumeric characters.
 function generateRandomString() {
   let text = '';
@@ -47,7 +38,16 @@ function generateRandomString() {
    return text;
 }
 
-//Set up GET requests:
+const emailInUsers = (email) => {
+  for(id in users) {
+    if (users[id].email === email) {
+      return id;
+    }
+  }
+  return false;
+};
+
+//-------GET REQUESTS --------/
 app.get("/", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
@@ -60,7 +60,7 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase, 
-    user: req.cookies["user_id"],
+    user_id: req.cookies["user_id"],
     users
   };
   res.render("urls_index", templateVars);
@@ -89,12 +89,36 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
+
+app.get("/register", (req, res) => {
+  const templateVars = {
+    urls: urlDatabase,
+    user_id: req.cookies["user_id"], 
+    users
+  };
+  res.render("urls_registration", templateVars);
+});
+
+app.get("/login", (req, res) => {
+  const templateVars = {
+    urls: urlDatabase, 
+    user_id: req.cookies["user_id"], 
+    users
+  };
+  res.render("urls_login", templateVars)
+})
       
-//Set up POST requests:  
+//---------POST REQUESTS -------//
+
 app.post("/urls", (req, res) => {
-  const shortString = generateRandomString();
-  urlDatabase[shortString] = req.body.longURL;
-  res.redirect(`/urls/${shortString}`);
+  console.log(req.body);
+  if (!req.cookies.user_id) {
+    res.redirect("/login");    
+  } else if (req.cookies.user_id) {
+    const shortString = generateRandomString();
+    urlDatabase[shortString] = req.body.longURL; 
+    res.redirect(`/urls/${shortString}`);
+  }
 });
 
 app.post("/urls/:id", (req, res) => {
@@ -134,7 +158,7 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const enteredEmail = req.body.email; 
   const enteredPassword = req.body.password; 
-  if (!enteredEmail) { //in case if no email is entered. 
+  if (!enteredEmail) { 
     return res.status(403).send("403: Email not found");
   } else if (emailInUsers(enteredEmail, users)) {
     const user = emailInUsers(enteredEmail, users);
@@ -154,3 +178,6 @@ app.post("/logout", (req, res) => {
   res.redirect('urls');
 });
   
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
