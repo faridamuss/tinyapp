@@ -164,7 +164,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).send("email or password cannot be blank");
   } else if (emailAlreadyRegistered(email, users)) {
-    res.status(400).send("Please try a differnt email, this email is already registered with an account");
+    res.status(400).send("Please try a different email, this email is already registered with an account");
   }
   const id = Math.floor(Math.random() * 2000) + 1;
   users[id] = {
