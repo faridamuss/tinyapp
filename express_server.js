@@ -1,17 +1,18 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const PORT = 8080; // default port 8080
+const PORT = 8080; 
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
+//DATABASES////////////////////////////////
 const urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
-    uderID: "aJ48lW"
+    userID: "aJ48lW"
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
@@ -30,7 +31,7 @@ const users = {
     email: "user2@example.com", 
     password: "dishwasher-funk"
   }
-}
+};
 
 // FUNCTIONS //
 
@@ -93,8 +94,12 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+ if(urlDatabase[req.params.shortURL] === undefined) {
+   res.status(404).send("404: Page Not Found");
+ } else {
+   const longURL = urlDatabase[req.params.shortURL].longURL;
+   res.redirect(longURL);
+ }
 });
 
 app.get("/register", (req, res) => {
@@ -126,6 +131,7 @@ app.post("/urls", (req, res) => {
     urlDatabase[shortString] = {};
     urlDatabase[shortString].longURL = req.body.longURL
     urlDatabase[shortString].userID = req.cookies["user_id"];
+    
     res.redirect(`/urls/${shortString}`);
   }
 });
