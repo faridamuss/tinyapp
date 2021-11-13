@@ -10,7 +10,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 !["URLs page"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/urls-page.png)
 
-!["URLs page"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/urls-page.png) 
+!["ShortenURLs"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/shortenURL-page.png) 
 
 
 ## Dependencies
