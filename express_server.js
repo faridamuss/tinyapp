@@ -3,12 +3,14 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const PORT = 8080; 
 
+//MIDDLEWARE
+
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
-//DATABASES////////////////////////////////
+//DATABASES
 const urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
@@ -33,7 +35,7 @@ const users = {
   }
 };
 
-//// HELPER FUNCTIONS ///
+//// HELPER FUNCTIONS 
 
 const emailInUsers = (email) => {
   for(id in users) {
@@ -70,7 +72,6 @@ app.get("/", (req, res) => {
     user_id: req.cookies["user_id"],
     users
   };
-  console.log("usercookieid", templateVars.user_id);
   res.render("urls_index", templateVars);
 });
 
@@ -94,11 +95,21 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => { 
+  const shortURL = req.params.shortURL;
+   let haveAccess = false;
+   const user_id = req.cookies["user_id"]
+   if (urlDatabase[shortURL].userID === user_id) {
+     haveAccess = true;
+
+   }
+   console.log(shortURL);
+
   const templateVars = {
     shortURL: req.params.shortURL, 
-    longURL: urlDatabase[req.params.shortURL].longURL, 
+    longURL: urlDatabase[shortURL].longURL, 
     user_id: req.cookies["user_id"], 
-    users
+    users,
+    haveAccess
   };
   res.render("urls_show", templateVars);
 });
