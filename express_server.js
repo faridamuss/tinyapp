@@ -33,7 +33,7 @@ const users = {
   }
 };
 
-// FUNCTIONS //
+//// HELPER FUNCTIONS ///
 
 const emailInUsers = (email) => {
   for(id in users) {
@@ -44,7 +44,6 @@ const emailInUsers = (email) => {
   return false;
 };
 
-// Implement a function that returns a string of 6 random alphanumeric characters.
 function generateRandomString() {
   let text = '';
    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -53,6 +52,15 @@ function generateRandomString() {
    return text;
 }
 
+const urlsForUser = (id) => {
+  let userShortUrl = {};
+  for (let url in urlDatabase) {
+    if (id === urlDatabase[url].userID) {
+      userShortUrl[url] = urlDatabase[url];
+    }
+  }
+  return userShortUrl;
+}
 
 //-------GET REQUESTS --------/
 
@@ -62,12 +70,14 @@ app.get("/", (req, res) => {
     user_id: req.cookies["user_id"],
     users
   };
+  console.log("usercookieid", templateVars.user_id);
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls", (req, res) => {
+  const userShortUrl = urlsForUser(req.cookies["user_id"])
   const templateVars = {
-    urls: urlDatabase, 
+    urls: userShortUrl, 
     user_id: req.cookies["user_id"],
     users
   };
