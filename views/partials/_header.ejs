@@ -8,22 +8,26 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        <% if(user_id) { %>
-          <form method="POST" class="form-inline" action="/logout">
-            <label style="width: 200px; margin-left: 250px;">Logged In As: <%= useremail %></label>
-            <button type="submit" class="btn btn-outline-dark">Logout</button>
-          </div>
-          </form>
-          <% } else { %>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
-              <div class="navbar-nav">
-                <a class="nav-item nav-link" href="/login" style="margin: 1em">Login</a>
-                <a class="nav-item nav-link" href="/register" style="margin: 1em">Register</a>
-              </div>
-            </div>
-         <% } %>
-        </form>
       </div>
     </div>
+    <% if(user){%>
+      <form method="POST" action="/logout">
+          <div class="form-group mb-2">
+              <label style="color:white; ">Logged In As: <%= user.email%></label>
+              <button type="submit" class="btn btn-outline-light">Logout</button>
+          </div>
+      </form>
+      <% } else { %>
+          <form action="/login">
+              <div class="form-group mb-2">
+                  <button class="btn btn-outline-light">Login</button>
+              </div>
+          </form>
+          <form action="/register">
+              <div class="form-group mb-2" style="padding-left: 1em;">
+                  <button class="btn btn-outline-light">Create New User</button>
+              </div>
+          </form>
+          <% }%>
   </nav>
 </header>
