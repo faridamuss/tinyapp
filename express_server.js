@@ -62,7 +62,7 @@ const urlsForUser = (id) => {
     }
   }
   return userShortUrl;
-}
+};
 
 //-------GET REQUESTS --------/
 
@@ -84,6 +84,7 @@ app.get("/urls", (req, res) => {
   };
   res.render("urls_index", templateVars);
 });
+
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {
@@ -160,12 +161,23 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const shortURL = req.params.id; 
   const longURL = req.body.newURL;
-  urlDatabase[shortURL] = longURL;
+  const userid = req.cookies["user_id"];
+   if(urlDatabase[shortURL].userID !== userid) {
+     return res.status(400).send("Denied");
+   } 
+   urlDatabase[shortURL] = {
+     longURL,
+     userID: req.cookies["user_id"]
+   };
   res.redirect('/urls');
 }); 
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
+  const userid = req.cookies["user_id"];
+   if(urlDatabase[shortURL].userID !== userid) {
+     return res.status(400).send("Denied Permissions to Delete.");
+   }
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
