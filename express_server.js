@@ -51,7 +51,7 @@ app.get("/urls/new", (req, res) => {
 //gets register page
 app.get("/register", (req, res) => {
   let templateVars = {
-      user: users[req.session.user_id]
+    user: users[req.session.user_id]
   };
   res.render("register", templateVars);
 });
@@ -135,7 +135,7 @@ app.post("/urls/:id", (req, res) => {
   } else {
     res.status(401).send("You do not have authorization to edit this short URL.");
   }
-}); 
+});
 
 //Login user
 app.post('/login', (req, res) => {
