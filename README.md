@@ -4,11 +4,11 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["Login Page"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/login-page.png)
+!["Login Page"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/loginpage.png)
 
-!["Register Page"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/register-page.png)
+!["Register Page"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/register.png)
 
-!["URLs page"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/urls-page.png)
+!["URLs page"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/createURLpage.png)
 
 !["ShortenURLs"](https://github.com/faridamoussaeff/tinyapp/blob/master/docs/shortenURL-page.png) 
 
